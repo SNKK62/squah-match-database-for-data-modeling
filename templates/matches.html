@@ -1,0 +1,261 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>試合結果一覧</title>
+    <script>
+      const setScrollbarWidth = () => {
+        const scrollbarWidth =
+          window.innerWidth - document.documentElement.clientWidth;
+        document.documentElement.style.setProperty(
+          "--scrollbar",
+          `${scrollbarWidth}px`
+        );
+      };
+      function clearFilter() {
+        document.querySelector("select[name='player_id']").value = 0;
+        document.querySelector("select[name='match_meta_id']").value = 0;
+        document.querySelector("select[name='sex']").value = 0;
+      }
+
+      function hideToast() {
+        setTimeout(() => {
+          const toast = document.querySelector(".toast");
+          toast.style.animation = "slideOut 0.5s forwards linear";
+          setTimeout(() => {
+            toast.remove();
+          }, 500);
+        }, 3000);
+      }
+      window.onload = hideToast;
+    </script>
+    <style>
+      body {
+        width: calc(100dvw - var(--scrollbar));
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      h1 {
+        display: flex;
+        height: 4rem;
+        justify-content: center;
+        align-items: center;
+      }
+      #wrapper {
+        width: fit-content;
+        box-sizing: border-box;
+        margin: 0 auto;
+        border: 1px solid black;
+        div {
+          display: grid;
+          grid-template-columns: 1fr 5rem;
+          box-sizing: border-box;
+          padding: 0.25rem 0.5rem;
+          width: 100%;
+          span {
+            margin-right: 1rem;
+          }
+        }
+        span {
+          display: flex;
+          align-items: center;
+        }
+        div:nth-child(odd) {
+          background-color: #cccccc;
+        }
+        div:nth-child(even) {
+          background-color: #ffffff;
+        }
+      }
+      form {
+        width: fit-content;
+        margin: 1rem auto;
+      }
+      #delete {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 5px;
+        background-color: #d13c05;
+        box-shadow: 2px 2px 2px #888888;
+        color: white;
+        &:hover {
+          background-color: #970909;
+          cursor: pointer;
+        }
+        &:active {
+          box-shadow: none;
+        }
+      }
+      #success {
+        background-color: #4fdb8a;
+      }
+      #error {
+        background-color: #f26161;
+      }
+      .toast {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: fit-content;
+        border-radius: 10px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: 0.5s slideIn forwards linear;
+        opacity: 0;
+      }
+      @keyframes slideIn {
+        0% {
+          transform: translateY(20%);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOut {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+      header {
+        nav {
+          display: flex;
+          ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            li {
+              a {
+                text-decoration: none;
+                color: black;
+                padding: 0.5rem 1rem;
+                border: 1px solid black;
+                border-radius: 10px;
+                background-color: #1c274c;
+                color: white;
+                &:hover {
+                  background-color: #2a3d6c;
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+        }
+        white-space: nowrap;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        &::-webkit-scrollbar {
+          display: none;
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      }
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="{{url_for('index')}}">ホーム</a></li>
+          <li><a href="{{url_for('add_match')}}">試合結果追加</a></li>
+          <li><a href="{{url_for('players')}}">選手一覧</a></li>
+        </ul>
+      </nav>
+    </header>
+    {% if code %}
+    <div id="success" class="toast">
+      <span>{{code}}</span>
+    </div>
+    {% elif err_code %}
+    <div id="error" class="toast" onload="hideToast()">
+      <span>{{err_code}}</span>
+    </div>
+    {% endif %}
+    <h1>試合結果一覧</h1>
+    <form action="{{url_for('filter_matches')}}" method="POST">
+      <label for="player_id">選手名:</label>
+      <select name="player_id">
+        <option value="0">選手を選択してください</option>
+        {% for player in players %} {% if player.id == player_id %}
+        <option value="{{player.id}}" selected>{{player.name}}</option>
+        {% else %}
+        <option value="{{player.id}}">{{player.name}}</option>
+        {% endif %} {% endfor %}
+      </select>
+      <label for="match_meta_id">試合名:</label>
+      <select name="match_meta_id">
+        <option value="0">試合を選択してください</option>
+        {% for match in match_metas %} {% if match.id == match_meta_id %}
+        <option value="{{match.id}}" selected>
+          {{match.sex}}{{match.name}}
+        </option>
+        {% else %}
+        <option value="{{match.id}}">{{match.sex}}{{match.name}}</option>
+        {% endif %} {% endfor %}
+      </select>
+      <label for="sex">性別:</label>
+      <select name="sex">
+        <option value="0">性別を選択してください</option>
+        {% if sex == "男子" %}
+        <option value="1" selected>男子</option>
+        <option value="2">女子</option>
+        {% elif sex == "女子" %}
+        <option value="1">男子</option>
+        <option value="2" selected>女子</option>
+        {% else %}
+        <option value="1">男子</option>
+        <option value="2">女子</option>
+        {% endif %}
+      </select>
+      <button type="submit">検索</button>
+      <button type="button" onclick="clearFilter()">クリア</button>
+    </form>
+    <div id="wrapper">
+      {% for match in matches %}
+      <div>
+        <span>
+          <span>
+            <a href="{{url_for('player', id=match.winner_id)}}"
+              >{{ match.winner_name }}({{match.winner_univ_name}})</a
+            >
+            &nbsp;bt.&nbsp;
+            <a href="{{url_for('player', id=match.loser_id)}}"
+              >{{ match.loser_name}}({{match.loser_univ_name}})</a
+            >
+          </span>
+          <span> {{match.sex}}{{match.match_name}} </span>
+          <span
+            >{{ match.winner_game_count }} - {{match.loser_game_count}}</span
+          >
+          <span
+            >{{match.winner_game1_score}}-{{match.loser_game1_score}},
+            {{match.winner_game2_score}}-{{match.loser_game2_score}}, {%if
+            match.winner_game_count + match.loser_game_count == 3 %}
+            {{match.winner_game3_score}}-{{match.loser_game3_score}} {% endif %}
+          </span>
+        </span>
+        <span>
+          <form
+            action="{{url_for('delete_match_execute', id=match.id)}}"
+            method="post"
+            onsubmit="return confirm('削除しますか？');"
+          >
+            <button id="delete">削除</button>
+          </form>
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>

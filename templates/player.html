@@ -1,0 +1,191 @@
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>選手詳細</title>
+    <script>
+      function hideToast() {
+        setTimeout(() => {
+          const toast = document.querySelector(".toast");
+          toast.style.animation = "slideOut 0.5s forwards linear";
+          setTimeout(() => {
+            toast.remove();
+          }, 500);
+        }, 3000);
+      }
+      window.onload = hideToast;
+    </script>
+    <style>
+      body {
+        box-sizing: border-box;
+        width: 100dvw;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        width: fit-content;
+        margin: 0 auto;
+      }
+      #container {
+        width: fit-content;
+        margin: 4rem auto;
+        display: flex;
+        gap: 3rem;
+      }
+      #icon-container {
+        width: fit-content;
+        height: fit-content;
+        padding: 0.5rem;
+        border: 1px solid black;
+        border-radius: 100%;
+      }
+      #detail-container {
+        margin: 2rem 1rem;
+      }
+      #button-container {
+        margin: 0 1rem;
+        display: flex;
+        justify-content: center;
+      }
+      #right-container {
+        min-width: 15rem;
+      }
+      a {
+        padding: 0.5rem 1rem;
+        border: 1px solid black;
+        border-radius: 5px;
+        background-color: #1c274c;
+        color: white;
+        &:hover {
+          background-color: #2a3d6c;
+          cursor: pointer;
+        }
+      }
+      a {
+        text-decoration: none;
+        color: white;
+      }
+      header {
+        nav {
+          display: flex;
+          ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            li {
+              a {
+                text-decoration: none;
+                color: black;
+                padding: 0.5rem 1rem;
+                border: 1px solid black;
+                border-radius: 10px;
+                background-color: #1c274c;
+                color: white;
+                &:hover {
+                  background-color: #2a3d6c;
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+        }
+        white-space: nowrap;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        &::-webkit-scrollbar {
+          display: none;
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      }
+      svg {
+        stroke: {% if player.sex == "男子" %} #1C274C {% elif player.sex == "女子" %} #FF69B4 {% endif %};
+      }
+      #success {
+        background-color: #4fdb8a;
+      }
+      .toast {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: fit-content;
+        border-radius: 10px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: 0.5s slideIn forwards linear;
+        opacity: 0;
+      }
+      @keyframes slideIn {
+        0% {
+          transform: translateY(20%);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOut {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="{{url_for('index')}}">ホーム</a></li>
+          <li><a href="{{url_for('matches')}}">試合結果一覧</a></li>
+          <li><a href="{{url_for('add_match')}}">試合結果追加</a></li>
+          <li><a href="{{url_for('players')}}">選手一覧</a></li>
+        </ul>
+      </nav>
+    </header>
+    {% if code %}
+    <div id="success" class="toast">
+      <span>{{code}}</span>
+    </div>
+    {% endif %}
+    <h1>選手詳細情報</h1>
+    <div id="container">
+      <div id="icon-container">
+        <svg
+          width="150px"
+          height="150px"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="12" cy="6" r="4" stroke-width="1.5" />
+          <path
+            d="M19.9975 18C20 17.8358 20 17.669 20 17.5C20 15.0147 16.4183 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C14.231 22 15.8398 21.8433 17 21.5634"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+        </svg>
+      </div>
+      <div id="right-container">
+        <div id="button-container">
+          <a href="{{url_for('edit_player', id=player.id)}}">編集</a>
+        </div>
+        <div id="detail-container">
+          <div>氏名: {{player.name}}</div>
+          <div>学年: {{player.grade}}年生</div>
+          <div>性別: {{player.sex}}</div>
+          <div>所属大学: {{player.univ_name}}</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

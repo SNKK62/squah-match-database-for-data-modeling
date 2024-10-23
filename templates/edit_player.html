@@ -1,0 +1,148 @@
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>選手情報編集</title>
+    <style>
+      body {
+        box-sizing: border-box;
+        width: 100dvw;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        width: fit-content;
+        margin: 0 auto;
+      }
+      #container {
+        width: fit-content;
+        margin: 4rem auto;
+        display: flex;
+        gap: 3rem;
+      }
+      form {
+        div {
+            margin: 1rem 0;
+            label {
+                margin-right: 1rem;
+            }
+            input {
+                padding: 0.5rem;
+                border: 1px solid black;
+                border-radius: 5px;
+            }
+            select {
+                padding: 0.5rem;
+                border: 1px solid black;
+                border-radius: 5px;
+            }
+        }
+        #button-container {
+          margin: 1rem;
+          display: flex;
+          justify-content: center;
+        }
+        button {
+          color: black;
+          padding: 0.5rem 1rem;
+          border: 1px solid black;
+          border-radius: 10px;
+          background-color: #1c274c;
+          color: white;
+          &:hover {
+            background-color: #2a3d6c;
+            cursor: pointer;
+          }
+        }
+      }
+      header {
+        nav {
+          display: flex;
+          ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            li {
+              a {
+                text-decoration: none;
+                color: black;
+                padding: 0.5rem 1rem;
+                border: 1px solid black;
+                border-radius: 10px;
+                background-color: #1c274c;
+                color: white;
+                &:hover {
+                  background-color: #2a3d6c;
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+        }
+        white-space: nowrap;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        &::-webkit-scrollbar {
+          display: none;
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      }
+      #err {
+          text-align: center;
+          color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="{{url_for('index')}}">ホーム</a></li>
+          <li><a href="{{url_for('matches')}}">試合結果一覧</a></li>
+          <li><a href="{{url_for('add_match')}}">試合結果追加</a></li>
+          <li><a href="{{url_for('players')}}">選手一覧</a></li>
+        </ul>
+      </nav>
+    </header>
+    <h1>選手情報編集</h1>
+    <div id="err">{{code}}</div>
+    <div id="container">
+      <form action="{{url_for('edit_player_execute', id=player.id)}}" method="post">
+        <div>
+          <label for="name">氏名</label>
+          <input type="text" name="name" value="{{player.name}}" />
+        </div>
+        <div>
+          <label for="grade">学年</label>
+          <input
+            type="number"
+            name="grade"
+            min="1"
+            max="4"
+            value="{{player.grade}}"
+          />
+        </div>
+        <div>
+            <label for="sex">性別</label>
+            <select name="sex">
+              <option value="男子" {% if player.sex == "男子" %}selected{% endif %}>男子</option>
+              <option value="女子" {% if player.sex == "女子" %}selected{% endif %}>女子</option>
+            </select>
+        </div>
+        <div>
+          <label for="univ_id">所属大学</label>
+          <select name="univ_id">
+            {% for univ in universities %}
+            <option value="{{univ.id}}" {% if univ.id == player.univ_id %}selected{% endif %}>{{univ.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div id="button-container">
+          <button type="submit">更新</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>選手が見つかりません</title>
+    <style>
+      body {
+        width: 100dvw;
+        height: 100dvh;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        width: fit-content;
+        height: 40px;
+        margin: 0 auto;
+        font-size: 3rem;
+      }
+      div {
+        width: 100%;
+        height: calc(100vh - 80px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-flow: column;
+      }
+      span {
+        font-size: 10rem;
+      }
+      header {
+        nav {
+          display: flex;
+          ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            li {
+              a {
+                text-decoration: none;
+                color: black;
+                padding: 0.5rem 1rem;
+                border: 1px solid black;
+                border-radius: 10px;
+                background-color: #1c274c;
+                color: white;
+                &:hover {
+                  background-color: #2a3d6c;
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+        }
+        white-space: nowrap;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        &::-webkit-scrollbar {
+          display: none;
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      }
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="{{url_for('index')}}">ホーム</a></li>
+          <li><a href="{{url_for('matches')}}">試合結果一覧</a></li>
+          <li><a href="{{url_for('add_match')}}">試合結果追加</a></li>
+          <li><a href="{{url_for('players')}}">選手一覧</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div>
+      <h1>選手が見つかりません</h1>
+      <span>404</span>
+    </div>
+  </body>
+</html>

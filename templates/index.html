@@ -1,0 +1,30 @@
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>入口のページだよ</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      body {
+        box-sizing: border-box;
+        width: 100dvw;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      ul {
+        width: fit-content;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>入口のページ</h1>
+    <ul>
+      <li><a href="{{url_for('matches')}}">試合結果一覧</a></li>
+      <li><a href="{{url_for('add_match')}}">試合結果追加</a></li>
+      <li><a href="{{url_for('players')}}">選手一覧</a></li>
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>試合結果追加</title>
+    <script></script>
+    <style>
+      body {
+        width: 100dvw;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      h1 {
+        display: flex;
+        height: 4rem;
+        justify-content: center;
+        align-items: center;
+      }
+      form {
+        width: fit-content;
+        margin: 1rem auto;
+        display: flex;
+        flex-flow: column;
+        gap: 2rem;
+
+        button {
+          width: fit-content;
+          margin: 0 auto;
+          padding: 0.5rem 1rem;
+          border: 1px solid black;
+          border-radius: 5px;
+          background-color: #1c274c;
+          color: white;
+          &:hover {
+            background-color: #2a3d6c;
+            cursor: pointer;
+          }
+        }
+        input[type="number"] {
+          width: 3rem;
+        }
+      }
+      #err {
+        text-align: center;
+        color: red;
+      }
+      header {
+        nav {
+          display: flex;
+          ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            li {
+              a {
+                text-decoration: none;
+                color: black;
+                padding: 0.5rem 1rem;
+                border: 1px solid black;
+                border-radius: 10px;
+                background-color: #1c274c;
+                color: white;
+                &:hover {
+                  background-color: #2a3d6c;
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+        }
+        white-space: nowrap;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        &::-webkit-scrollbar {
+          display: none;
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      }
+    </style>
+    <script>
+      const players = {{ players|tojson|safe }};
+      const match_metas = {{ match_metas|tojson|safe }};
+      function filterBySex() {
+          const sexSelect = document.querySelector("select[name='sex']");
+          const sexId = sexSelect.value;
+          const winnerSelect = document.querySelector("select[name='winner_id']");
+          const loserSelect = document.querySelector("select[name='loser_id']");
+          const matchMetaSelect = document.querySelector("select[name='match_meta_id']");
+
+          winnerSelect.innerHTML = "<option value='0' selected>選手を選択してください</option>";
+          loserSelect.innerHTML = "<option value='0' selected>選手を選択してください</option>";
+          matchMetaSelect.innerHTML = "<option value='0' selected>試合を選択してください</option>";
+
+          const sex = sexId === "1" ? "男子" : "女子";
+          players.forEach(player => {
+            if (player.sex !== sex) return;
+            const option = document.createElement("option");
+
+            option.value = player.id;
+            option.textContent = `${player.name}(${player.univ_name})`;
+
+            winnerSelect.appendChild(option);
+            loserSelect.appendChild(option.cloneNode(true));
+          })
+
+          match_metas.forEach(match => {
+            if (match.sex !== sex) return;
+            const option = document.createElement("option");
+
+            option.value = match.id;
+            option.textContent = `${sex}${match.name}`;
+
+            matchMetaSelect.appendChild(option);
+          })
+      }
+      window.onload = filterBySex;
+    </script>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="{{url_for('index')}}">ホーム</a></li>
+          <li><a href="{{url_for('matches')}}">試合結果一覧</a></li>
+          <li><a href="{{url_for('players')}}">選手一覧</a></li>
+        </ul>
+      </nav>
+    </header>
+    <h1>試合結果追加</h1>
+    <div id="err">{{code}}</div>
+    <form action="{{url_for('add_match_execute')}}" method="post">
+      <div>
+        <label for="sex">性別:</label>
+        <select name="sex" oninput="filterBySex()">
+          <option value="1" selected>男子</option>
+          <option value="2">女子</option>
+        </select>
+      </div>
+      <div>
+        <label for="winner_id">勝者名:</label>
+        <select name="winner_id">
+          <option value="0">選手を選択してください</option>
+          {% for player in players %}
+          <option value="{{player.id}}">
+            {{player.name}}({{player.univ_name}})
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="loser_id">敗者名:</label>
+        <select name="loser_id">
+          <option value="0">選手を選択してください</option>
+          {% for player in players %}
+          <option value="{{player.id}}">
+            {{player.name}}({{player.univ_name}})
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="match_meta_id">試合名:</label>
+        <select name="match_meta_id">
+          <option value="0">試合を選択してください</option>
+          {% for match in match_metas %}
+          <option value="{{match.id}}">{{match.sex}}{{match.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <div>
+          <span>ゲームカウント:</span>
+          <span>2</span>
+          <span>-</span>
+          <input type="number" name="loser_game_count" min="0" max="1" />
+        </div>
+        <div>スコア</div>
+        <div>
+          <span>第1ゲーム:</span>
+          <input type="number" name="winner_game1_score" min="0" />
+          <span>-</span>
+          <input type="number" name="loser_game1_score" min="0" />
+        </div>
+        <div>
+          <span>第2ゲーム:</span>
+          <input type="number" name="winner_game2_score" min="0" />
+          <span>-</span>
+          <input type="number" name="loser_game2_score" min="0" />
+        </div>
+        <div>
+          <span>第3ゲーム:</span>
+          <input type="number" name="winner_game3_score" min="0" />
+          <span>-</span>
+          <input type="number" name="loser_game3_score" min="0" />
+        </div>
+      </div>
+      <button type="submit">追加</button>
+    </form>
+  </body>
+</html>

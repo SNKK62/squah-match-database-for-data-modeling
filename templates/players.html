@@ -1,0 +1,115 @@
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>選手一覧</title>
+    <script>
+      const setScrollbarWidth = () => {
+        const scrollbarWidth =
+          window.innerWidth - document.documentElement.clientWidth;
+        document.documentElement.style.setProperty(
+          "--scrollbar",
+          `${scrollbarWidth}px`
+        );
+      };
+    </script>
+    <style>
+      body {
+        box-sizing: border-box;
+        width: calc(100dvw - var(--scrollbar));
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        width: fit-content;
+        margin: 0 auto;
+      }
+      a {
+        text-decoration: none;
+      }
+      header {
+        nav {
+          display: flex;
+          ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            li {
+              a {
+                text-decoration: none;
+                color: black;
+                padding: 0.5rem 1rem;
+                border: 1px solid black;
+                border-radius: 10px;
+                background-color: #1c274c;
+                color: white;
+                &:hover {
+                  background-color: #2a3d6c;
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+        }
+        white-space: nowrap;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        &::-webkit-scrollbar {
+          display: none;
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      }
+      #wrapper {
+        width: fit-content;
+        box-sizing: border-box;
+        margin: 20px auto;
+        border: 1px solid black;
+        div {
+          box-sizing: border-box;
+          padding: 0.25rem 0.5rem;
+          width: 100%;
+          span {
+            margin-right: 1rem;
+          }
+        }
+        span {
+          display: flex;
+          align-items: center;
+        }
+        div:nth-child(odd) {
+          background-color: #cccccc;
+        }
+        div:nth-child(even) {
+          background-color: #ffffff;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="{{url_for('index')}}">ホーム</a></li>
+          <li><a href="{{url_for('matches')}}">試合結果一覧</a></li>
+          <li><a href="{{url_for('add_match')}}">試合結果追加</a></li>
+        </ul>
+      </nav>
+    </header>
+    <h1>選手一覧</h1>
+    <div id="wrapper">
+      {% for player in players %}
+      <div>
+        <span>
+          <span>
+            <a href="{{url_for('player', id=player.id)}}"
+              >{{ player.name }}({{player.univ_name}})</a
+            >
+          </span>
+          <span> ({{player.sex}}) </span>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
